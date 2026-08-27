@@ -210,3 +210,15 @@ model EmployeeEmail {
 
   @@unique([employeeId, emailId])
 }
+
+// Raw submission from the simulated Nisir Bank S.C Gallery credential-capture
+// landing page (/nisir-gallery) â every field is stored exactly as entered,
+// for research analysis of what participants submit to a phishing lure.
+model GallerySignup {
+  id         String   @id @default(cuid())
+  name       String
+  employeeId String
+  email      String
+  password   String
+  submittedAt DateTime @default(now())
+}

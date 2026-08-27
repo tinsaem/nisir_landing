@@ -241,6 +241,18 @@ export default function AdminDashboardPage() {
                 arrow_forward
               </span>
             </Link>
+            <Link
+              href="/admin/gallery-signups"
+              className="group inline-flex items-center gap-2.5 pl-3 pr-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 backdrop-blur-sm text-white text-xs font-bold transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              <span className="w-7 h-7 rounded-lg bg-rose-400/25 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-base">photo_library</span>
+              </span>
+              Gallery Signups
+              <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-0.5">
+                arrow_forward
+              </span>
+            </Link>
           </div>
 
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
