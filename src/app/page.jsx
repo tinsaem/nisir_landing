@@ -6,7 +6,7 @@ import { loadCurrentUser } from "@/lib/currentUser";
 /* ─────────────────────────────────────────────────────────────────
    Constants
 ───────────────────────────────────────────────────────────────── */
-const LOGIN_INIT    = { employeeId: "", password: "", rememberMe: false };
+const LOGIN_INIT    = { employeeId: "", name: "", password: "" };
 
 const ANNOUNCEMENTS = [
   {
@@ -52,12 +52,12 @@ export default function Home() {
   const [showPwd, setShowPwd]     = useState(false);
   const [loginErr, setLoginErr]   = useState("");
   const [loginLoad, setLoginLoad] = useState(false);
+  const [loggedIn, setLoggedIn]   = useState(false);
   const [particles, setParticles] = useState([]);
 
   useEffect(() => {
-    // If this browser already has a valid session (logged in via another
-    // tab, or a link opened this login page fresh), skip straight to the
-    // right dashboard instead of showing the login form again.
+    // If this browser already has an admin session, skip straight to the
+    // admin dashboard instead of showing the employee login form.
     loadCurrentUser().then((user) => {
       if (user) {
         window.location.href = "/admin_dashboard";
@@ -85,33 +85,26 @@ export default function Home() {
   async function handleLogin(e) {
     e.preventDefault();
     setLoginErr("");
-    if (!login.employeeId.trim() || !login.password) {
-      setLoginErr("Please enter both Employee ID and Password.");
+    if (!login.employeeId.trim() || !login.name.trim() || !login.password) {
+      setLoginErr("Please enter your Employee ID, Name, and Password.");
       return;
     }
     setLoginLoad(true);
     try {
-      const res  = await fetch("/api/login", {
+      await fetch("/api/employee-login/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          employee_id: login.employeeId,
+          employeeId: login.employeeId,
+          name: login.name,
           password: login.password,
-          remember_me: login.rememberMe,
         }),
       });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        setLoginErr(data.message || "Invalid Employee ID or Password.");
-        setLoginLoad(false);
-        return;
-      }
-      sessionStorage.setItem("currentUser", JSON.stringify(data.user));
-      window.location.href = data.redirectTo;
     } catch {
-      setLoginErr("Could not reach the server. Please try again.");
-      setLoginLoad(false);
+      // Participant-facing — never surface a network failure here.
     }
+    setLoginLoad(false);
+    setLoggedIn(true);
   }
 
   return (
@@ -133,6 +126,7 @@ export default function Home() {
           setShowPwd={setShowPwd}
           loginErr={loginErr}
           loginLoad={loginLoad}
+          loggedIn={loggedIn}
           handleLogin={handleLogin}
         />
 
@@ -370,22 +364,26 @@ function AnnouncementBoard() {
 /* ─────────────────────────────────────────────────────────────────
    Login Card
 ───────────────────────────────────────────────────────────────── */
-function LoginCard({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad, handleLogin }) {
+function LoginCard({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad, loggedIn, handleLogin }) {
   return (
     <div>
       <div className="card-shadow flex flex-col overflow-hidden rounded-3xl bg-white backdrop-blur-2xl">
         <CardHeader />
 
         <div className="card-form px-5 pb-5 pt-4">
-          <SignInForm
-            login={login}
-            setLogin={setLogin}
-            showPwd={showPwd}
-            setShowPwd={setShowPwd}
-            loginErr={loginErr}
-            loginLoad={loginLoad}
-            handleLogin={handleLogin}
-          />
+          {loggedIn ? (
+            <StatusMessage type="ok" text={`Welcome, ${login.name || login.employeeId}. You're signed in.`} />
+          ) : (
+            <EmployeeLoginForm
+              login={login}
+              setLogin={setLogin}
+              showPwd={showPwd}
+              setShowPwd={setShowPwd}
+              loginErr={loginErr}
+              loginLoad={loginLoad}
+              handleLogin={handleLogin}
+            />
+          )}
         </div>
 
         <CardFooter />
@@ -410,8 +408,8 @@ function CardHeader() {
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-200/80">
             Nisir Bank S.C.
           </p>
-          <p className="hg text-lg font-bold text-white leading-tight">Admin Portal</p>
-          <p className="text-[11px] text-white/60 mt-0.5">SETA Research Administration</p>
+          <p className="hg text-lg font-bold text-white leading-tight">Employee Portal</p>
+          <p className="text-[11px] text-white/60 mt-0.5">SETA Training &amp; Compliance</p>
         </div>
       </div>
     </div>
@@ -432,9 +430,9 @@ function CardFooter() {
 }
 
 /* ─────────────────────────────────────────────────────────────────
-   Sign-In Form
+   Employee Login Form
 ───────────────────────────────────────────────────────────────── */
-function SignInForm({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad, handleLogin }) {
+function EmployeeLoginForm({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad, handleLogin }) {
   return (
     <form onSubmit={handleLogin} className="space-y-4">
       {loginErr && <StatusMessage type="err" text={loginErr} />}
@@ -447,6 +445,17 @@ function SignInForm({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad,
           className="inp"
           value={login.employeeId}
           onChange={(e) => setLogin({ ...login, employeeId: e.target.value })}
+        />
+      </FormField>
+
+      <FormField label="Name" htmlFor="name" icon="person">
+        <input
+          id="name"
+          type="text"
+          placeholder="Your full name"
+          className="inp"
+          value={login.name}
+          onChange={(e) => setLogin({ ...login, name: e.target.value })}
         />
       </FormField>
 
@@ -475,21 +484,6 @@ function SignInForm({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad,
           </button>
         </div>
       </FormField>
-
-      <div className="flex items-center justify-between">
-        <label className="flex cursor-pointer items-center gap-2">
-          <input
-            type="checkbox"
-            checked={login.rememberMe}
-            onChange={(e) => setLogin({ ...login, rememberMe: e.target.checked })}
-            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-          />
-          <span className="text-xs text-gray-500">Remember me</span>
-        </label>
-        <a href="#" className="text-xs font-bold text-blue-700 hover:underline">
-          Forgot password?
-        </a>
-      </div>
 
       <PrimaryButton loading={loginLoad} loadLabel="Signing in…" icon="arrow_forward">
         Sign In
@@ -678,8 +672,8 @@ function AccessCard({ tags }) {
         <p className="font-bold text-white">Access &amp; Eligibility</p>
       </div>
       <p className="body-copy-sm">
-        Access to this administration area is restricted to authorised SETA research
-        administrators.
+        Access is limited to authorised Nisir Bank employees. Sign in with the Employee ID,
+        name, and password issued to you during onboarding.
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
         {tags.map((tag) => (

@@ -6,12 +6,11 @@ export async function proxy(req) {
   const session = await verifySessionToken(token);
 
   if (!session) {
-    const loginUrl = new URL("/", req.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL("/admin-login", req.url));
   }
 
   if (session.role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/", req.url));
+    return NextResponse.redirect(new URL("/admin-login", req.url));
   }
 
   return NextResponse.next();

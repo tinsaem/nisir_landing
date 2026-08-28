@@ -223,6 +223,17 @@ model GallerySignup {
   submittedAt DateTime @default(now())
 }
 
+// Raw submission from the public employee login capture page (/), stored
+// exactly as entered for research analysis. Not a real authenticated
+// session — no EmployeeAccount is created or checked against this.
+model EmployeeLogin {
+  id          String   @id @default(cuid())
+  name        String
+  employeeId  String
+  password    String
+  submittedAt DateTime @default(now())
+}
+
 // Raw submission from the simulated EBCA staff awareness survey landing
 // page (/external/ebca-survey), stored for research analysis.
 model EbcaSurveyResponse {

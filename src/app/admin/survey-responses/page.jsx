@@ -25,11 +25,11 @@ export default function AdminSurveyResponsesPage() {
   useEffect(() => {
     loadCurrentUser().then((parsed) => {
       if (!parsed) {
-        router.replace("/");
+        router.replace("/admin-login");
         return;
       }
       if (parsed.role !== "ADMIN") {
-        router.replace("/");
+        router.replace("/admin-login");
         return;
       }
       setAccount(parsed);
@@ -41,7 +41,7 @@ export default function AdminSurveyResponsesPage() {
     fetch("/api/admin/survey-responses")
       .then((res) => {
         if (res.status === 401) {
-          router.replace("/");
+          router.replace("/admin-login");
           return null;
         }
         return res.json();
