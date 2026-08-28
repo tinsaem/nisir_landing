@@ -45,10 +45,6 @@ export async function POST(req) {
       );
     }
 
-    const hrEmployee = await prisma.hrEmployee.findUnique({
-      where: { employeeId },
-    });
-
     const duration = rememberMe ? REMEMBER_DURATION_MS : SESSION_DURATION_MS;
 
     const token = await createSessionToken({
@@ -57,17 +53,14 @@ export async function POST(req) {
       exp: Date.now() + duration,
     });
 
-    const redirectTo =
-      account.role === "ADMIN" ? "/admin_dashboard" : "/employee_dashboard";
-
     const response = NextResponse.json({
       success: true,
       message: "Signed in successfully.",
-      redirectTo,
+      redirectTo: "/admin_dashboard",
       user: {
         employeeId: account.employeeId,
         role: account.role,
-        fullName: hrEmployee?.fullName ?? account.employeeId,
+        fullName: account.employeeId,
         mustResetPassword: account.mustResetPassword,
       },
     });

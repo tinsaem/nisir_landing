@@ -39,8 +39,7 @@ export default function Header() {
   const user = {
     name: account.fullName,
     id: account.employeeId,
-    role: account.role === "ADMIN" ? "Administrator" : "Employee",
-    tokens: account.tokens ?? 0,
+    role: "Administrator",
   };
 
   const initials = user.name
@@ -68,10 +67,7 @@ export default function Header() {
     <header className="navbar">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <Link
-            href={account.role === "ADMIN" ? "/admin_dashboard" : "/employee_dashboard"}
-            className="flex flex-col items-center shrink-0"
-          >
+          <Link href="/admin_dashboard" className="flex flex-col items-center shrink-0">
             <img
               src="/images/nisir_bank_logo.svg"
               alt="Nisir Bank S.C."
@@ -85,13 +81,10 @@ export default function Header() {
           {/* Divider */}
           <span className="h-6 w-px bg-gray-200 shrink-0" />
 
-          {/* Home pill — always visible, role-aware, proportional to logo */}
           <Link
-            href={account.role === "ADMIN" ? "/admin_dashboard" : "/employee_dashboard"}
+            href="/admin_dashboard"
             className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-full text-[12px] font-semibold text-white bg-gradient-to-br from-blue-700 to-blue-400 border border-blue-200 shadow-sm transition-all duration-200 shrink-0 hover:brightness-110 hover:shadow-md ${
-              isActive(account.role === "ADMIN" ? "/admin_dashboard" : "/employee_dashboard")
-                ? "ring-2 ring-blue-300 ring-offset-1"
-                : ""
+              isActive("/admin_dashboard") ? "ring-2 ring-blue-300 ring-offset-1" : ""
             }`}
           >
             <span
@@ -102,49 +95,9 @@ export default function Header() {
             </span>
             <span className="hidden sm:inline">Home</span>
           </Link>
-
-          <nav className="hidden md:flex items-center gap-1">
-            <Link
-              className={`nav-link ${isActive("/employee_dashboard") ? "active" : ""}`}
-              href="/employee_dashboard"
-            >
-              Dashboard
-            </Link>
-
-            <Link
-              className={`nav-link ${isActive("/foundational_learning") ? "active" : ""}`}
-              href="/foundational_learning"
-            >
-              Course Library
-            </Link>
-
-            <Link
-              className={`nav-link ${isActive("/challenge") ? "active" : ""}`}
-              href="/challenge"
-            >
-              Assessments
-            </Link>
-
-            <Link
-              className={`nav-link ${isActive("/collaborative_work_space") ? "active" : ""}`}
-              href="/collaborative_work_space"
-            >
-              Community
-            </Link>
-          </nav>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="token-badge hidden sm:inline-flex">
-            <span
-              className="material-symbols-outlined text-sm"
-              style={{ fontSize: "14px" }}
-            >
-              toll
-            </span>
-            <span>{user.tokens.toLocaleString()} ISP</span>
-          </div>
-
           <button
             type="button"
             className="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors text-gray-500"

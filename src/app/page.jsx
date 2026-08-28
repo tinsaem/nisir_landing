@@ -7,7 +7,6 @@ import { loadCurrentUser } from "@/lib/currentUser";
    Constants
 ───────────────────────────────────────────────────────────────── */
 const LOGIN_INIT    = { employeeId: "", password: "", rememberMe: false };
-const REGISTER_INIT = { employeeId: ""};
 
 const ANNOUNCEMENTS = [
   {
@@ -49,14 +48,10 @@ const ANNOUNCE_PALETTE = {
    Root page — orchestrates state and API calls only
 ───────────────────────────────────────────────────────────────── */
 export default function Home() {
-  const [tab, setTab]             = useState("login");
   const [login, setLogin]         = useState(LOGIN_INIT);
-  const [reg, setReg]             = useState(REGISTER_INIT);
   const [showPwd, setShowPwd]     = useState(false);
   const [loginErr, setLoginErr]   = useState("");
-  const [regMsg, setRegMsg]       = useState({ type: "", text: "" });
   const [loginLoad, setLoginLoad] = useState(false);
-  const [regLoad, setRegLoad]     = useState(false);
   const [particles, setParticles] = useState([]);
 
   useEffect(() => {
@@ -65,7 +60,7 @@ export default function Home() {
     // right dashboard instead of showing the login form again.
     loadCurrentUser().then((user) => {
       if (user) {
-        window.location.href = user.role === "ADMIN" ? "/admin_dashboard" : "/employee_dashboard";
+        window.location.href = "/admin_dashboard";
       }
     });
   }, []);
@@ -86,12 +81,6 @@ export default function Home() {
       })
     );
   }, []);
-
-  function switchTab(t) {
-    setTab(t);
-    setLoginErr("");
-    setRegMsg({ type: "", text: "" });
-  }
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -125,58 +114,6 @@ export default function Home() {
     }
   }
 
-  async function handleRegister(e) {
-  e.preventDefault();
-
-  setRegMsg({ type: "", text: "" });
-
-  if (!reg.employeeId.trim()) {
-    setRegMsg({
-      type: "err",
-      text: "Please enter your Employee ID.",
-    });
-    return;
-  }
-
-  setRegLoad(true);
-
-  try {
-    const res = await fetch("/api/request-credentials", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        employeeId: reg.employeeId.trim(),
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      setRegMsg({
-        type: "err",
-        text: data.message || "Request failed. Please try again.",
-      });
-    } else {
-      setRegMsg({
-        type: "ok",
-        text: data.message,
-      });
-
-      setReg(REGISTER_INIT);
-    }
-  } catch {
-    setRegMsg({
-      type: "err",
-      text: "Could not reach the server. Please try again.",
-    });
-  }
-
-  setRegLoad(false);
-}
- 
-
   return (
     <>
       {/* ── animated background ── */}
@@ -190,8 +127,6 @@ export default function Home() {
         <Navbar />
 
         <HeroSection
-          tab={tab}
-          switchTab={switchTab}
           login={login}
           setLogin={setLogin}
           showPwd={showPwd}
@@ -199,11 +134,6 @@ export default function Home() {
           loginErr={loginErr}
           loginLoad={loginLoad}
           handleLogin={handleLogin}
-          reg={reg}
-          setReg={setReg}
-          regMsg={regMsg}
-          regLoad={regLoad}
-          handleRegister={handleRegister}
         />
 
         <AboutSection />
@@ -440,36 +370,22 @@ function AnnouncementBoard() {
 /* ─────────────────────────────────────────────────────────────────
    Login Card
 ───────────────────────────────────────────────────────────────── */
-function LoginCard({ tab, switchTab, login, setLogin, showPwd, setShowPwd, loginErr, loginLoad, handleLogin, reg, setReg, regMsg, regLoad, handleRegister }) {
+function LoginCard({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad, handleLogin }) {
   return (
     <div>
       <div className="card-shadow flex flex-col overflow-hidden rounded-3xl bg-white backdrop-blur-2xl">
+        <CardHeader />
 
-        {/* Gradient header with tab switcher */}
-        <CardHeader tab={tab} switchTab={switchTab} />
-
-        {/* Form area — card-form restores dark text on white bg */}
         <div className="card-form px-5 pb-5 pt-4">
-          {tab === "login" ? (
-            <SignInForm
-              login={login}
-              setLogin={setLogin}
-              showPwd={showPwd}
-              setShowPwd={setShowPwd}
-              loginErr={loginErr}
-              loginLoad={loginLoad}
-              handleLogin={handleLogin}
-            />
-          ) : (
-            <RegisterForm
-              reg={reg}
-              setReg={setReg}
-              regMsg={regMsg}
-              regLoad={regLoad}
-              handleRegister={handleRegister}
-              switchTab={switchTab}
-            />
-          )}
+          <SignInForm
+            login={login}
+            setLogin={setLogin}
+            showPwd={showPwd}
+            setShowPwd={setShowPwd}
+            loginErr={loginErr}
+            loginLoad={loginLoad}
+            handleLogin={handleLogin}
+          />
         </div>
 
         <CardFooter />
@@ -478,7 +394,7 @@ function LoginCard({ tab, switchTab, login, setLogin, showPwd, setShowPwd, login
   );
 }
 
-function CardHeader({ tab, switchTab }) {
+function CardHeader() {
   return (
     <div className="card-header relative overflow-hidden px-5 py-5">
       {/* decorative orbs */}
@@ -486,7 +402,7 @@ function CardHeader({ tab, switchTab }) {
       <div className="pointer-events-none absolute right-4 top-4 h-16 w-16 rounded-full bg-white/5" />
 
       {/* Bank identity */}
-      <div className="relative flex items-center gap-4 mb-5">
+      <div className="relative flex items-center gap-4">
         <div className="logo-pulse flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl overflow-hidden bg-white shadow-lg border border-white/30">
           <img src="/images/nisir_bank_logo.svg" alt="Nisir Bank S.C." className="h-12 w-12 object-contain" />
         </div>
@@ -494,30 +410,11 @@ function CardHeader({ tab, switchTab }) {
           <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-blue-200/80">
             Nisir Bank S.C.
           </p>
-          <p className="hg text-lg font-bold text-white leading-tight">Employee Portal</p>
-          <p className="text-[11px] text-white/60 mt-0.5">SETA Training &amp; Compliance</p>
+          <p className="hg text-lg font-bold text-white leading-tight">Admin Portal</p>
+          <p className="text-[11px] text-white/60 mt-0.5">SETA Research Administration</p>
         </div>
       </div>
-
-      {/* Tab switcher */}
-      <div className="relative flex gap-1 rounded-xl bg-white/10 p-1">
-        <TabButton active={tab === "login"} icon="login" label="Sign In" onClick={() => switchTab("login")} />
-        <TabButton active={tab === "register"} icon="person_add" label="New Employee" onClick={() => switchTab("register")} />
-      </div>
     </div>
-  );
-}
-
-function TabButton({ active, icon, label, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`tab-btn flex-1 flex items-center justify-center gap-2 rounded-lg py-2 transition-all ${active ? "tab-btn-active" : "text-white/60 hover:text-white/90"}`}
-    >
-      <span className="material-symbols-outlined text-base">{icon}</span>
-      {label}
-    </button>
   );
 }
 
@@ -603,57 +500,6 @@ function SignInForm({ login, setLogin, showPwd, setShowPwd, loginErr, loginLoad,
         <a href="#" className="font-bold text-blue-700 hover:underline">
           Contact Security Operations
         </a>
-      </p>
-    </form>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────────
-   Register / Get Credentials Form
-───────────────────────────────────────────────────────────────── */
-function RegisterForm({ reg, setReg, regMsg, regLoad, handleRegister, switchTab }) {
-  return (
-    <form onSubmit={handleRegister} className="space-y-4">
-      {regMsg.text && <StatusMessage type={regMsg.type} text={regMsg.text} />}
-
-      
-
-      <FormField label="Employee ID *" htmlFor="reg-emp-id" icon="badge">
-        <input
-          id="reg-emp-id"
-          type="text"
-          placeholder="As shown on your HR appointment letter"
-          className="inp"
-          autoComplete="off"
-          value={reg.employeeId}
-          onChange={(e) => setReg({ ...reg, employeeId: e.target.value })}
-        />
-      </FormField>
-
-     
-
-      {/* Security note */}
-      <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3.5 py-3 text-[11px] text-amber-800 leading-relaxed">
-        <span className="material-symbols-outlined filled text-base text-amber-500 shrink-0 mt-0.5">lock</span>
-        <span>
-          Your temporary password will be sent <strong>only</strong> to your pre-registered
-          Nisir Bank organizational email. Never share your credentials with anyone.
-        </span>
-      </div>
-
-      <PrimaryButton loading={regLoad} loadLabel="Sending credentials…" icon="mark_email_read">
-        Send My Credentials
-      </PrimaryButton>
-
-      <p className="text-center text-[11px] text-gray-400 pt-1">
-        Already have credentials?{" "}
-        <button
-          type="button"
-          onClick={() => switchTab("login")}
-          className="font-bold text-blue-700 hover:underline"
-        >
-          Sign in here
-        </button>
       </p>
     </form>
   );
@@ -832,10 +678,8 @@ function AccessCard({ tags }) {
         <p className="font-bold text-white">Access &amp; Eligibility</p>
       </div>
       <p className="body-copy-sm">
-        Access is strictly limited to authorised Nisir Bank employees. Each employee is assigned a
-        unique Employee ID upon onboarding. Use the{" "}
-        <strong className="text-white/90">New Employee</strong> tab on the login card above to
-        request your credentials.
+        Access to this administration area is restricted to authorised SETA research
+        administrators.
       </p>
       <div className="mt-2 flex flex-wrap gap-2">
         {tags.map((tag) => (

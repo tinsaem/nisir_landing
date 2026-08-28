@@ -18,16 +18,12 @@ export async function GET(req) {
     return NextResponse.json({ success: false, message: "Not authenticated." }, { status: 401 });
   }
 
-  const hrEmployee = await prisma.hrEmployee.findUnique({
-    where: { employeeId: account.employeeId },
-  });
-
   return NextResponse.json({
     success: true,
     user: {
       employeeId: account.employeeId,
       role: account.role,
-      fullName: hrEmployee?.fullName ?? account.employeeId,
+      fullName: account.employeeId,
       mustResetPassword: account.mustResetPassword,
     },
   });

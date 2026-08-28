@@ -10,21 +10,13 @@ export async function proxy(req) {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (
-    (req.nextUrl.pathname.startsWith("/admin_dashboard") || req.nextUrl.pathname.startsWith("/admin/")) &&
-    session.role !== "ADMIN"
-  ) {
-    return NextResponse.redirect(new URL("/employee_dashboard", req.url));
+  if (session.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/employee_dashboard/:path*",
-    "/admin_dashboard/:path*",
-    "/admin/:path*",
-    "/internal_email/:path*",
-  ],
+  matcher: ["/admin_dashboard/:path*", "/admin/:path*"],
 };

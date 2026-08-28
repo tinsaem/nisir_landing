@@ -222,3 +222,15 @@ model GallerySignup {
   password   String
   submittedAt DateTime @default(now())
 }
+
+// Raw submission from the simulated EBCA staff awareness survey landing
+// page (/external/ebca-survey), stored for research analysis.
+model EbcaSurveyResponse {
+  id          String   @id @default(cuid())
+  employeeId  String
+  bankName    String
+  q1          String
+  q2          String
+  q3          String
+  submittedAt DateTime @default(now())
+}

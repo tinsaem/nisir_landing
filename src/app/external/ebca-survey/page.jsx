@@ -12,10 +12,10 @@ export default function EbcaSurveyPage() {
     e.preventDefault();
     setSubmitting(true);
     safeApiCall(() =>
-      fetch("/api/internal-email/dv", {
+      fetch("/api/ebca-survey/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ templateId: "email-014", dv: "dv2" }),
+        body: JSON.stringify(form),
       })
     ).finally(() => {
       setSubmitting(false);

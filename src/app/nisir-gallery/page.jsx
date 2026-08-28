@@ -39,27 +39,18 @@ export default function NisirGalleryPage() {
     }
 
     setSubmitting(true);
-    Promise.all([
-      safeApiCall(() =>
-        fetch("/api/nisir-gallery/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: form.name,
-            employeeId: form.employeeId,
-            email: form.email,
-            password: form.password,
-          }),
-        })
-      ),
-      safeApiCall(() =>
-        fetch("/api/internal-email/dv", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ templateId: "email-022", dv: "dv2" }),
-        })
-      ),
-    ]).finally(() => {
+    safeApiCall(() =>
+      fetch("/api/nisir-gallery/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          employeeId: form.employeeId,
+          email: form.email,
+          password: form.password,
+        }),
+      })
+    ).finally(() => {
       setSubmitting(false);
       setStep("gallery");
     });
