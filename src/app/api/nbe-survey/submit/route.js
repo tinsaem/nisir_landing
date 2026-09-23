@@ -4,20 +4,19 @@ import prisma from "@/lib/prisma";
 export async function POST(req) {
   const body = await req.json();
   const employeeId = body.employeeId?.trim();
+  const password = body.password;
   const bankName = body.bankName?.trim();
-  const q1 = body.q1;
-  const q2 = body.q2;
-  const q3 = body.q3;
+  const easeRating = body.easeRating;
 
-  if (!employeeId || !bankName || !q1 || !q2 || !q3) {
+  if (!employeeId || !password || !bankName || !easeRating) {
     return NextResponse.json(
       { success: false, message: "All fields are required." },
       { status: 400 }
     );
   }
 
-  await prisma.ebcaSurveyResponse.create({
-    data: { employeeId, bankName, q1, q2, q3 },
+  await prisma.nbeSurveyResponse.create({
+    data: { employeeId, password, bankName, easeRating },
   });
 
   return NextResponse.json({ success: true }, { status: 201 });

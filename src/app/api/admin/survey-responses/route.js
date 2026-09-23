@@ -16,7 +16,7 @@ export async function GET(req) {
   if (error) return error;
 
   try {
-    const responses = await prisma.ebcaSurveyResponse.findMany({ orderBy: { submittedAt: "desc" } });
+    const responses = await prisma.nbeSurveyResponse.findMany({ orderBy: { submittedAt: "desc" } });
     return NextResponse.json({ success: true, responses });
   } catch (err) {
     console.error("[admin/survey-responses GET]", err);

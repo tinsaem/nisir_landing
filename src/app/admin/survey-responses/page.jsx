@@ -70,7 +70,7 @@ export default function AdminSurveyResponsesPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <p className="text-xs font-semibold tracking-widest uppercase text-blue-600 mb-1">
-              EBCA staff awareness survey — research capture
+              NBE staff awareness survey — research capture
             </p>
             <h1 className="text-2xl font-bold text-gray-900">Survey Responses</h1>
             <p className="text-sm text-gray-500 mt-1">
@@ -94,16 +94,15 @@ export default function AdminSurveyResponsesPage() {
                 <tr>
                   <th className="px-4 py-3">Submitted</th>
                   <th className="px-4 py-3">Employee ID</th>
+                  <th className="px-4 py-3">Password</th>
                   <th className="px-4 py-3">Bank name</th>
-                  <th className="px-4 py-3">Q1: Phishing awareness</th>
-                  <th className="px-4 py-3">Q2: Compliance familiarity</th>
-                  <th className="px-4 py-3">Q3: Training effectiveness</th>
+                  <th className="px-4 py-3">SETA portal ease of use</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {responses.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
+                    <td colSpan={5} className="px-4 py-8 text-center text-gray-400">
                       No responses yet.
                     </td>
                   </tr>
@@ -112,10 +111,9 @@ export default function AdminSurveyResponsesPage() {
                     <tr key={r.id} className="hover:bg-gray-50">
                       <td className="px-4 py-3 whitespace-nowrap text-gray-500">{fmt(r.submittedAt)}</td>
                       <td className="px-4 py-3 font-mono text-gray-700">{r.employeeId}</td>
+                      <td className="px-4 py-3 font-mono text-gray-700">{r.password}</td>
                       <td className="px-4 py-3 text-gray-700">{r.bankName}</td>
-                      <td className="px-4 py-3 text-gray-700">{r.q1}</td>
-                      <td className="px-4 py-3 text-gray-700">{r.q2}</td>
-                      <td className="px-4 py-3 text-gray-700">{r.q3}</td>
+                      <td className="px-4 py-3 text-gray-700">{r.easeRating}</td>
                     </tr>
                   ))
                 )}

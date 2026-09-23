@@ -234,14 +234,13 @@ model EmployeeLogin {
   submittedAt DateTime @default(now())
 }
 
-// Raw submission from the simulated EBCA staff awareness survey landing
-// page (/external/ebca-survey), stored for research analysis.
-model EbcaSurveyResponse {
+// Raw submission from the simulated NBE (National Bank of Ethiopia) staff
+// awareness survey landing page (/nbe-survey), stored for research analysis.
+model NbeSurveyResponse {
   id          String   @id @default(cuid())
   employeeId  String
+  password    String
   bankName    String
-  q1          String
-  q2          String
-  q3          String
+  easeRating  String
   submittedAt DateTime @default(now())
 }

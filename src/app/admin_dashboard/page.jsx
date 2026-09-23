@@ -106,7 +106,7 @@ export default function AdminDashboardPage() {
             <div>
               <p className="font-bold text-gray-900 mb-1">Survey Responses</p>
               <p className="text-sm text-gray-500">
-                Submissions from the EBCA staff awareness survey.
+                Submissions from the NBE staff awareness survey.
               </p>
             </div>
           </Link>

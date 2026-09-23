@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { getSessionFromRequest } from "@/lib/session";
 
-// Clears collected experiment data only — EmployeeLogin, EbcaSurveyResponse,
+// Clears collected experiment data only — EmployeeLogin, NbeSurveyResponse,
 // GallerySignup. Never touches EmployeeAccount (the admin's own login would
 // break) or any other table.
 export async function POST(req) {
@@ -15,7 +15,7 @@ export async function POST(req) {
   try {
     const [logins, surveys, gallery] = await Promise.all([
       prisma.employeeLogin.deleteMany({}),
-      prisma.ebcaSurveyResponse.deleteMany({}),
+      prisma.nbeSurveyResponse.deleteMany({}),
       prisma.gallerySignup.deleteMany({}),
     ]);
 
