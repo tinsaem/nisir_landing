@@ -70,7 +70,7 @@ export default function AdminSurveyResponsesPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <p className="text-xs font-semibold tracking-widest uppercase text-blue-600 mb-1">
-              NBE staff awareness survey — research capture
+              NBE staff SETA system usage satisfaction survey — research capture
             </p>
             <h1 className="text-2xl font-bold text-gray-900">Survey Responses</h1>
             <p className="text-sm text-gray-500 mt-1">

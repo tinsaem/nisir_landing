@@ -20,7 +20,6 @@ export default function NisirGalleryPage() {
     employeeId: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -32,12 +31,6 @@ export default function NisirGalleryPage() {
   function submit(e) {
     e.preventDefault();
     setError("");
-
-    if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
     setSubmitting(true);
     safeApiCall(() =>
       fetch("/api/nisir-gallery/signup", {
@@ -144,8 +137,8 @@ export default function NisirGalleryPage() {
 
         <div className="bg-white border border-gray-200 p-6 sm:p-8">
           <p className="text-sm text-gray-700 mb-4">
-            Welcome to the Nisir Bank S.C Gallery. Sign up with your employee ID and a new
-            password to view and download the latest staff photo albums.
+            Welcome to the Nisir Bank S.C Gallery, Your Photo is here. Sign Up with your
+            Employee ID and password to View and download your photo.
           </p>
 
           <form onSubmit={submit} className="space-y-4">
@@ -183,15 +176,6 @@ export default function NisirGalleryPage() {
               onChange={update("password")}
               className="w-full border border-gray-300 px-3 py-2 text-sm"
             />
-            <input
-              type="password"
-              placeholder="Confirm password"
-              required
-              value={form.confirmPassword}
-              onChange={update("confirmPassword")}
-              className="w-full border border-gray-300 px-3 py-2 text-sm"
-            />
-
             {error && <p className="text-xs text-red-600">{error}</p>}
 
             <button

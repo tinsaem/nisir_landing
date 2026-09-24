@@ -61,7 +61,7 @@ export default function NbeSurveyPage() {
           </div>
           <div>
             <p className="text-[13px] font-bold text-[#1d3557]">National Bank of Ethiopia</p>
-            <p className="text-[11px] text-gray-500">2026 Staff Awareness Survey</p>
+            <p className="text-[11px] text-gray-500">2026 Staff SETA System Usage Satisfaction Survey</p>
           </div>
         </div>
 
